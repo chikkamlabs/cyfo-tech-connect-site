@@ -235,7 +235,7 @@ export default function WorkshopDetailPage() {
       alert("Please fill in all required fields (Name, Email, Phone) first to register.");
       return;
     }
-
+    
     setIsWhatsappSubmitting(true);
     try {
       if (!supabase) {
