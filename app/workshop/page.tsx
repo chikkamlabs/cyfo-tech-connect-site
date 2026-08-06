@@ -35,8 +35,10 @@ export default function WorkshopDetailPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [referBy, setReferBy] = useState("");
   const [role, setRole] = useState("Professional");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDirectRegisterSubmitting, setIsDirectRegisterSubmitting] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registrationId, setRegistrationId] = useState("");
   
@@ -235,7 +237,7 @@ export default function WorkshopDetailPage() {
       alert("Please fill in all required fields (Name, Email, Phone) first to register.");
       return;
     }
-    
+
     setIsWhatsappSubmitting(true);
     try {
       if (!supabase) {
@@ -253,6 +255,7 @@ export default function WorkshopDetailPage() {
           name: fullName,
           mobile: phone,
           email: email,
+          referral_code: referBy || null,
           attendance: false,
           status: "workshop register"
         })
@@ -292,6 +295,51 @@ export default function WorkshopDetailPage() {
       alert(err.message || "Something went wrong during registration. Please try again.");
     } finally {
       setIsWhatsappSubmitting(false);
+    }
+  };
+
+  const handleDirectRegister = async () => {
+    if (!fullName || !email || !phone) {
+      alert("Please fill in all required fields (Name, Email, Phone) first.");
+      return;
+    }
+
+    setIsDirectRegisterSubmitting(true);
+    try {
+      if (!supabase) {
+        const generatedId = "Tckt-" + Math.floor(10000000 + Math.random() * 90000000);
+        window.location.href = `/success?ticket_id=${generatedId}`;
+        return;
+      }
+
+      const resolvedWorkshopId = workshop.id;
+
+      const { data: registration, error: regError } = await supabase
+        .from("registrations")
+        .insert({
+          workshop_id: resolvedWorkshopId,
+          name: fullName,
+          mobile: phone,
+          email: email,
+          referral_code: referBy || null,
+          attendance: false,
+          status: "Success"
+        })
+        .select()
+        .single();
+
+      if (regError) {
+        console.error("Database error inserting registration:", regError);
+        throw new Error(`Registration failed: ${regError.message}`);
+      }
+
+      const ticketId = registration.ticket_id;
+      window.location.href = `/success?ticket_id=${ticketId}`;
+    } catch (err: any) {
+      console.error("Direct registration failed:", err);
+      alert(err.message || "Something went wrong during registration. Please try again.");
+    } finally {
+      setIsDirectRegisterSubmitting(false);
     }
   };
 
@@ -532,6 +580,21 @@ export default function WorkshopDetailPage() {
                         </div>
                       </div>
 
+                      {/* Refer by */}
+                      <div>
+                        <label className="block text-xs font-mono text-[#94A3B8] uppercase mb-1.5">Refer by</label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-3.5 w-4 h-4 text-white/30" />
+                          <input 
+                            type="tel"
+                            placeholder="mobile number"
+                            value={referBy}
+                            onChange={(e) => setReferBy(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#050816] border border-white/10 focus:border-[#00E5FF] focus:outline-none text-sm transition-all placeholder:text-white/20"
+                          />
+                        </div>
+                      </div>
+
                       {/* Professional Role */}
                       <div>
                         <label className="block text-xs font-mono text-[#94A3B8] uppercase mb-1.5">Current Profile</label>
@@ -562,7 +625,7 @@ export default function WorkshopDetailPage() {
                         <span className="text-[10px] text-emerald-400 font-bold uppercase">Discount Applied</span>
                       </div>
                     </div>
-                    
+
                     {/* Submit Button */}
                     {/* <button
                       type="submit"
@@ -580,15 +643,14 @@ export default function WorkshopDetailPage() {
                           <span>Pay & Register Now</span>
                         </>
                       )}
-                    </button> */}
-
+                    </button>  */}
 
                     {/* WhatsApp Pay Option */}
                     <div className="mt-4 pt-4 border-t border-white/[0.08] text-center space-y-2">
-                      <button
+                      {/* <button
                         type="button"
                         onClick={handlePayViaWhatsapp}
-                        disabled={isSubmitting || isWhatsappSubmitting}
+                        disabled={isSubmitting || isWhatsappSubmitting || isDirectRegisterSubmitting}
                         className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#22c55e]/90 to-[#16a34a] hover:from-[#22c55e] hover:to-[#15803d] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] text-white text-sm font-bold tracking-wide transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {isWhatsappSubmitting ? (
@@ -602,6 +664,26 @@ export default function WorkshopDetailPage() {
                               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.864.002-2.637-1.03-5.116-2.905-6.994s-4.352-2.91-6.989-2.91c-5.441 0-9.864 4.422-9.868 9.868-.001 1.748.463 3.454 1.344 4.964l-.996 3.633 3.723-.976zm11.366-7.76c-.328-.164-1.94-.957-2.24-1.066-.3-.11-.518-.164-.734.164-.216.328-.838 1.066-1.026 1.284-.188.218-.376.246-.704.082-.328-.164-1.386-.51-2.64-1.627-.975-.87-1.633-1.946-1.824-2.274-.192-.328-.02-.505.144-.668.148-.146.328-.382.492-.574.164-.19.219-.328.328-.546.11-.218.055-.41-.027-.574-.082-.164-.734-1.77-.1005-2.59-.262-.63-.53-1.17-.735-1.17a5.523 5.523 0 0 0-.41-.01c-.218 0-.573.082-.872.41-.3.328-1.145 1.12-1.145 2.732s1.173 3.167 1.337 3.385c.164.218 2.31 3.527 5.59 4.945.78.336 1.39.537 1.865.688.784.248 1.497.214 2.061.13.629-.094 1.94-.794 2.215-1.529.275-.734.275-1.363.193-1.497-.082-.134-.3-.218-.629-.382z" />
                             </svg>
                             <span>Pay via WhatsApp</span>
+                          </>
+                        )}
+                      </button> */}
+
+                      {/* Direct Register Button */}
+                      <button
+                        type="button"
+                        onClick={handleDirectRegister}
+                        disabled={isSubmitting || isWhatsappSubmitting || isDirectRegisterSubmitting}
+                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#2563EB] hover:from-[#00E5FF]/90 hover:to-[#2563EB]/90 hover:shadow-[0_0_20px_rgba(0,229,255,0.3)] text-white text-sm font-bold tracking-wide transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {isDirectRegisterSubmitting ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Processing Registration...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 text-white" />
+                            <span>Register here</span>
                           </>
                         )}
                       </button>
