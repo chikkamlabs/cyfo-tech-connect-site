@@ -1,40 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Helper to check if the URL is a valid Supabase endpoint
-function isValidSupabaseUrl(url: string): boolean {
-  if (!url) return false;
-  if (url.includes("placeholder") || url.includes("YOUR_") || url.includes("MY_") || url.includes("example.com")) {
-    return false;
-  }
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
+export const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
-const isKeyValid = supabaseAnonKey && 
-  supabaseAnonKey.startsWith("eyJ") &&
-  !supabaseAnonKey.includes("placeholder") && 
-  !supabaseAnonKey.includes("YOUR_") && 
-  !supabaseAnonKey.includes("MY_");
-
-// Exporting the Supabase client. It will be null if environment variables are not correctly configured.
-export const supabase = isValidSupabaseUrl(supabaseUrl) && isKeyValid
-  ? createClient(supabaseUrl, supabaseAnonKey) 
-  : null;
-
-
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
-export const supabaseAdmin = isValidSupabaseUrl(supabaseUrl) && (supabaseServiceKey && supabaseServiceKey.startsWith("eyJ"))
-  ? createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      }
-    })
-  : null;
+export const supabaseAdmin =
+  supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      })
+    : null;

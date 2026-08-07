@@ -23,13 +23,14 @@ import {
   Share2
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
-import { mockWorkshop, WorkshopData } from "../../lib/workshopMock";
+import {  WorkshopData } from "../../lib/workshopMock";
 import HeaderPage from "../header/page";
 import FooterPage from "../footer/page";
 
 export default function WorkshopDetailPage() {
-  const [workshop, setWorkshop] = useState<WorkshopData>(mockWorkshop);
+  const [workshop, setWorkshop] = useState<WorkshopData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   
   // Registration Form State
   const [fullName, setFullName] = useState("");
@@ -50,103 +51,135 @@ export default function WorkshopDetailPage() {
   const [searchError, setSearchError] = useState("");
 
   useEffect(() => {
-    async function loadData() {
-      if (!supabase) {
-        setWorkshop(mockWorkshop);
+  async function loadData() {
+    setLoading(true);
+    setLoadError("");
+    setWorkshop(null);
+
+    if (!supabase) {
+      setLoadError(
+        "Supabase is not configured correctly. Please check the environment variables."
+      );
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Supabase request timed out after 8 seconds.")),
+          8000
+        )
+      );
+
+      const fetchPromise = supabase
+        .from("workshops")
+        .select("*")
+        .eq("status", true)
+        .limit(1);
+
+      const { data, error } = (await Promise.race([
+        fetchPromise,
+        timeoutPromise,
+      ])) as any;
+
+      if (error) {
+        throw new Error(
+          `Unable to load workshop details from Supabase: ${error.message}`
+        );
+      }
+
+      if (!data || data.length === 0) {
+        setWorkshop({
+          id: "empty",
+          title: "-",
+          description: "-",
+          topics: ["-"],
+          venue: "-",
+          dateTime: "-",
+          slots: "-",
+          speakers: ["-"],
+          poster: "/workshopmock1.png",
+          duration: "-",
+          actualPrice: "-",
+          offerPrice: "-",
+          status: false,
+        });
         setLoading(false);
         return;
       }
 
-      try {
-        // Fast-resolving Supabase fetch with an 8-second hard timeout
-        const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Supabase request timed out")), 8000)
-        );
+      const row = data[0];
 
-        const fetchPromise = supabase
-          .from("workshops")
-          .select("*")
-          .eq("status", true)
-          .limit(1);
+      let topics: string[] = [];
+      const rawTopics = row.topics;
 
-        const { data, error } = (await Promise.race([fetchPromise, timeoutPromise])) as any;
-
-        if (error) {
-          console.warn("Error fetching workshop details:", error.message);
-          setWorkshop(mockWorkshop);
-        } else if (data && data.length > 0) {
-          const row = data[0];
-
-          // Parse topics
-          let topics: string[] = [];
-          const rawTopics = row.topics;
-          if (Array.isArray(rawTopics)) {
-            topics = rawTopics;
-          } else if (typeof rawTopics === "string") {
-            try {
-              const parsed = JSON.parse(rawTopics);
-              topics = Array.isArray(parsed) ? parsed : rawTopics.split(",").map(t => t.trim());
-            } catch {
-              topics = rawTopics.split(",").map(t => t.trim());
-            }
-          }
-
-          // Parse speakers
-          let speakers: string[] = [];
-          const rawSpeakers = row.speakers || row.speaker_names || row['Speaker names'] || row.Speakers;
-          if (Array.isArray(rawSpeakers)) {
-            speakers = rawSpeakers;
-          } else if (typeof rawSpeakers === "string") {
-            try {
-              const parsed = JSON.parse(rawSpeakers);
-              speakers = Array.isArray(parsed) ? parsed : rawSpeakers.split(",").map(s => s.trim());
-            } catch {
-              speakers = rawSpeakers.split(",").map(s => s.trim());
-            }
-          }
-
-          setWorkshop({
-            id: row.workshop_id || row.id || "1",
-            title: row.title || "No Title",
-            description: row.description || "",
-            topics: topics.length > 0 ? topics : [],
-            venue: row.venue || "-",
-            dateTime: row.date_time || "-",
-            slots: row.slots !== undefined ? row.slots : "-",
-            speakers: speakers.length > 0 ? speakers : [],
-            poster: row.poster_url || "/workshopmock1.png",
-            duration: row.duration || "-",
-            actualPrice: row.actual_price !== undefined ? row.actual_price : "-",
-            offerPrice: row.offer_price !== undefined ? row.offer_price : "-",
-            status: row.status === true
-          });
-        } else {
-          // Empty state
-          setWorkshop({
-            id: "empty",
-            title: "-",
-            description: "-",
-            topics: ["-"],
-            venue: "-",
-            dateTime: "-",
-            slots: "-",
-            speakers: ["-"],
-            poster: "/workshopmock1.png",
-            duration: "-",
-            actualPrice: "-",
-            offerPrice: "-",
-            status: false
-          });
+      if (Array.isArray(rawTopics)) {
+        topics = rawTopics;
+      } else if (typeof rawTopics === "string") {
+        try {
+          const parsed = JSON.parse(rawTopics);
+          topics = Array.isArray(parsed)
+            ? parsed
+            : rawTopics.split(",").map((t: string) => t.trim());
+        } catch {
+          topics = rawTopics.split(",").map((t: string) => t.trim());
         }
-      } catch (err) {
-        console.error("Failed to load workshop details from Supabase (using mock fallback):", err);
-        setWorkshop(mockWorkshop);
-      } finally {
-        setLoading(false);
       }
+
+      let speakers: string[] = [];
+      const rawSpeakers =
+        row.speakers ||
+        row.speaker_names ||
+        row["Speaker names"] ||
+        row.Speakers;
+
+      if (Array.isArray(rawSpeakers)) {
+        speakers = rawSpeakers;
+      } else if (typeof rawSpeakers === "string") {
+        try {
+          const parsed = JSON.parse(rawSpeakers);
+          speakers = Array.isArray(parsed)
+            ? parsed
+            : rawSpeakers.split(",").map((s: string) => s.trim());
+        } catch {
+          speakers = rawSpeakers.split(",").map((s: string) => s.trim());
+        }
+      }
+
+      setWorkshop({
+        id: row.workshop_id || row.id || "1",
+        title: row.title || "No Title",
+        description: row.description || "",
+        topics,
+        venue: row.venue || "-",
+        dateTime: row.date_time || "-",
+        slots: row.slots !== undefined ? row.slots : "-",
+        speakers,
+        poster: row.poster_url || "/workshopmock1.png",
+        duration: row.duration || "-",
+        actualPrice:
+          row.actual_price !== undefined ? row.actual_price : "-",
+        offerPrice:
+          row.offer_price !== undefined ? row.offer_price : "-",
+        status: row.status === true,
+      });
+    } catch (err: any) {
+      console.error("Failed to load workshop details:", err);
+
+      setWorkshop(null);
+
+      setLoadError(
+        err?.message ||
+          "Unable to load workshop details. Please check your internet connection and try again."
+      );
+    } finally {
+      setLoading(false);
     }
-    loadData();
-  }, []);
+  }
+
+  loadData();
+}, []);
 
   // Load Cashfree SDK dynamically on Mount
   useEffect(() => {
@@ -427,20 +460,71 @@ export default function WorkshopDetailPage() {
       </div>
     );
   }
+  if (loadError) {
+  return (
+    <div className="min-h-screen flex flex-col bg-[#050816] text-white">
+      <HeaderPage />
 
-  const isActive = workshop.status;
+      <main className="flex-grow flex items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md">
+          <div className="bg-gradient-to-b from-[#0B1528] to-[#050816] border border-red-500/20 rounded-2xl p-8 text-center shadow-2xl">
 
-  const title = isActive ? workshop.title : "-";
-  const description = isActive ? workshop.description : "-";
-  const topics = isActive ? workshop.topics : ["-"];
-  const venue = isActive ? workshop.venue : "-";
-  const dateTime = isActive ? workshop.dateTime : "-";
-  const slots = isActive ? workshop.slots : "-";
-  const speakers = isActive ? workshop.speakers : ["-"];
-  const poster = isActive ? workshop.poster : "/workshopmock1.png";
-  const duration = isActive ? workshop.duration : "-";
-  const actualPrice = isActive ? workshop.actualPrice : "-";
-  const offerPrice = isActive ? workshop.offerPrice : "-";
+            <div className="mx-auto w-14 h-14 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+              <AlertCircle className="w-7 h-7" />
+            </div>
+
+            <h2 className="mt-5 text-xl font-bold text-white">
+              Unable to Load Workshop
+            </h2>
+
+            <p className="mt-3 text-sm text-[#94A3B8] leading-relaxed">
+              We could not retrieve the workshop details from our server.
+              No dummy information has been displayed.
+            </p>
+
+            <div className="mt-5 p-4 rounded-xl bg-red-500/5 border border-red-500/10 text-left">
+              <p className="text-[10px] font-mono uppercase text-red-400 mb-1">
+                Reason
+              </p>
+
+              <p className="text-xs text-red-200/80 leading-relaxed break-words">
+                {loadError}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#2563EB] hover:from-[#00E5FF]/90 hover:to-[#2563EB]/90 text-white text-sm font-bold transition-all"
+            >
+              Try Again
+            </button>
+
+            <p className="mt-4 text-[10px] font-mono text-[#64748B]">
+              If the problem continues, please try again later.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <FooterPage />
+    </div>
+  );
+}
+
+  const isActive = workshop?.status ?? false;
+
+  const title = isActive ? workshop?.title : "-";
+const description = isActive ? workshop?.description : "-";
+const topics = isActive ? workshop?.topics : ["-"];
+const venue = isActive ? workshop?.venue : "-";
+const dateTime = isActive ? workshop?.dateTime : "-";
+const slots = isActive ? workshop?.slots : "-";
+const speakers = isActive ? workshop?.speakers : ["-"];
+const poster = isActive ? workshop?.poster : "/workshopmock1.png";
+const duration = isActive ? workshop?.duration : "-";
+const actualPrice = isActive ? workshop?.actualPrice : "-";
+const offerPrice = isActive ? workshop?.offerPrice : "-";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050816] text-white">
