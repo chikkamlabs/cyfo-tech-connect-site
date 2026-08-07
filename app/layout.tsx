@@ -39,7 +39,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Cyfo Tech Connect - Cyber Workshops Ticket Booking",
+  title: "ST7 Tech Connect - Cyber, Ai Workshops, Ticket Booking",
   description: "Browse cybersecurity workshops, register, and manage tickets.",
 };
 
