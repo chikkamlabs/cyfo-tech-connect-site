@@ -340,20 +340,26 @@ export default function WorkshopDetailPage() {
   };
 
   const handleDirectRegister = async () => {
-    if (!fullName || !email || !phone) {
-      alert("Please fill in all required fields (Name, Email, Phone) first.");
-      return;
+  if (!workshop) {
+    alert(
+      "Workshop details are not available. Please refresh the page and try again."
+    );
+    return;
+  }
+
+  if (!fullName || !email || !phone) {
+    alert("Please fill in all required fields (Name, Email, Phone) first.");
+    return;
+  }
+
+  setIsDirectRegisterSubmitting(true);
+
+  try {
+    if (!supabase) {
+      throw new Error("Database client is not available.");
     }
 
-    setIsDirectRegisterSubmitting(true);
-    try {
-      if (!supabase) {
-        const generatedId = "Tckt-" + Math.floor(10000000 + Math.random() * 90000000);
-        window.location.href = `/success?ticket_id=${generatedId}`;
-        return;
-      }
-
-      const resolvedWorkshopId = workshop.id;
+    const resolvedWorkshopId = workshop.id;
 
       const { data: registration, error: regError } = await supabase
         .from("registrations")
