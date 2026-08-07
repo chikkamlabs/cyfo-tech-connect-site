@@ -197,6 +197,10 @@ export default function WorkshopDetailPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!workshop) {
+  alert("Workshop details are not available. Please refresh the page and try again.");
+  return;
+}
     if (!fullName || !email || !phone) {
       alert("Please fill in all required fields.");
       return;
@@ -212,7 +216,7 @@ export default function WorkshopDetailPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          workshop_id: workshop.id,
+          workshop_id: workshop?.id,
           name: fullName,
           mobile: phone,
           email: email,
@@ -266,6 +270,10 @@ export default function WorkshopDetailPage() {
   };
 
   const handlePayViaWhatsapp = async () => {
+    if (!workshop) {
+    alert("Workshop details are not available. Please refresh the page and try again.");
+    return;
+  }
     if (!fullName || !email || !phone) {
       alert("Please fill in all required fields (Name, Email, Phone) first to register.");
       return;
@@ -377,6 +385,12 @@ export default function WorkshopDetailPage() {
   };
 
   const handleSearchTicket = async () => {
+    if (!workshop) {
+    setSearchError(
+      "Workshop details are not available. Please refresh the page and try again."
+    );
+    return;
+  }
     if (!ticketSearchQuery.trim()) return;
     setIsSearchingTicket(true);
     setSearchResult(null);
