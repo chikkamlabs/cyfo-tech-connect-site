@@ -77,7 +77,7 @@ export default function HeroPage() {
 
         {/* Sub Heading */}
         <p className="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-[#CBD5E1] font-medium leading-relaxed drop-shadow-[0_2px_10px_rgba(5,8,22,0.8)]">
-          Cyfo Tech Connect conducts highly practical offline workshops, immersive cybersecurity workshops for students, professionals, and tech enthusiasts. Gain hands-on exposure under direct mentoring from industry certified defense specialists.
+          ST7 Tech Connect conducts highly practical offline workshops, immersive cybersecurity workshops for students, professionals, and tech enthusiasts. Gain hands-on exposure under direct mentoring from industry certified defense specialists.
         </p>
 
         {/* Action Buttons */}

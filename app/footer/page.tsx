@@ -49,7 +49,7 @@ export default function FooterPage() {
                 </svg>
               </div>
               <span className="font-sans font-bold text-lg tracking-tight text-white">
-                Cyfo <span className="text-[#00E5FF]">Tech Connect</span>
+                ST7 <span className="text-[#00E5FF]">Tech Connect</span>
               </span>
             </div>
             
@@ -178,7 +178,7 @@ export default function FooterPage() {
         {/* Bottom Bar: Copyright and Socials */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
           <p className="text-xs text-[#94A3B8]">
-            © 2026 Cyfo Tech Connect. All Rights Reserved.
+            © 2026 ST7 Tech Connect. All Rights Reserved.
           </p>
           
           {/* Social Icons (UI Only) */}

@@ -51,7 +51,7 @@ export default function HeaderPage() {
               </svg>
             </div>
             <span className="font-sans font-bold text-lg md:text-xl tracking-tight text-[#FFFFFF] group-hover:text-[#00E5FF] transition-colors duration-200">
-              Cyfo <span className="text-[#00E5FF]">Tech Connect</span>
+              ST7 <span className="text-[#00E5FF]">Tech Connect</span>
             </span>
           </Link>
 
