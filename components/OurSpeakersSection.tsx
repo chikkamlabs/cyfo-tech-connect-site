@@ -36,7 +36,7 @@ export const SPEAKERS_DATA: Speaker[] = [
   {
     name: "T. Chandu",
     designation: "South Zone Manager",
-    description: "Responsible for leading and expanding Cyfo Tech Connect's operations across South India by driving business growth, building strategic partnerships, and ensuring exceptional client satisfaction.",
+    description: "Responsible for leading and expanding ST7 Tech Connect's operations across South India by driving business growth, building strategic partnerships, and ensuring exceptional client satisfaction.",
     experience: "5+ years",
     sessionsConducted: "80+",
     accentColor: "from-[#F43F5E] to-[#BE123C]",

@@ -45,7 +45,7 @@ const TIMELINE = [
   },
   {
     year: "2026",
-    title: "Cyfo Tech Connect",
+    title: "ST7 Tech Connect",
     description: "Our landmark initiative (You are here!) hosting live interactive workshops, physical labs, and authorized weekend cyber security seminars.",
     icon: Sparkles,
     color: "from-[#00E5FF] via-[#2563EB] to-[#8B5CF6]",
@@ -82,7 +82,7 @@ export default function OurStoryPage() {
             </h1>
 
             <p className="text-base sm:text-lg text-[#94A3B8] leading-relaxed max-w-2xl mx-auto">
-              Cyfo Tech Connect is proudly powered by <span className="text-white font-bold">ST7 Group</span>, a pioneering tech conglomerate with a massive footprint in cybersecurity solutions, deep software engineering, and community-empowering digital products.
+              ST7 Tech Connect is proudly powered by <span className="text-white font-bold">ST7 Group</span>, a pioneering tech conglomerate with a massive footprint in cybersecurity solutions, deep software engineering, and community-empowering digital products.
             </p>
 
             <div className="pt-4 flex flex-wrap justify-center gap-6 text-xs sm:text-sm font-semibold text-[#CBD5E1]">

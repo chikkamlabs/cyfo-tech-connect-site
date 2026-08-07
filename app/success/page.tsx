@@ -259,7 +259,7 @@ function SuccessContent() {
                 className="w-40 h-40 object-contain"
               />
               <div className="text-center mt-3 text-[10px] font-mono text-[#050816] font-semibold tracking-wider select-none uppercase">
-                CYFO ENTRY PASS
+                ST7 Tech Connect ENTRY PASS
               </div>
             </div>
           ) : (

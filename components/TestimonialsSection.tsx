@@ -45,7 +45,7 @@ const TESTIMONIALS: Testimonial[] = [
   name: "Pranav Goud",
   role: "Student Entrepreneur, Hyderabad",
   category: "Student Founder",
-  content: "Cyfo Tech Connect helped me understand how cybersecurity fits into modern startups. Every session was interactive, practical, and immediately applicable.",
+  content: "ST7 Tech Connect helped me understand how cybersecurity fits into modern startups. Every session was interactive, practical, and immediately applicable.",
   rating: 5,
 },
 

@@ -26,7 +26,7 @@ export default function EnquiryForm() {
 
   const getCompiledWhatsAppUrl = () => {
     const formattedMessage = encodeURIComponent(
-      `*New Cyfo Tech Connect Enquiry*\n\n` +
+      `*New ST7 Tech Connect Enquiry*\n\n` +
       `👤 *Name:* ${formData.name.trim()}\n` +
       `📧 *Email:* ${formData.email.trim()}\n` +
       `📞 *WhatsApp:* ${formData.phone.trim()}\n` +

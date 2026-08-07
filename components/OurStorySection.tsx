@@ -25,7 +25,7 @@ export default function OurStorySection() {
     },
     {
       year: "2026",
-      title: "Cyfo Tech Connect",
+      title: "ST7 Tech Connect",
       desc: "Immersive live workshops & events.",
       icon: Sparkles,
     },
@@ -53,7 +53,7 @@ export default function OurStorySection() {
             </h2>
 
             <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
-              Cyfo Tech Connect is backed by the exceptional resources and industry prowess of <strong className="text-[#E2E8F0]">ST7 Group</strong>. From a compact team in 2020, we have secured critical platforms, developed security suites, and won academic acclaim across India.
+              ST7 Tech Connect is backed by the exceptional resources and industry prowess of <strong className="text-[#E2E8F0]">ST7 Group</strong>. From a compact team in 2020, we have secured critical platforms, developed security suites, and won academic acclaim across India.
             </p>
 
             <div className="pt-2">

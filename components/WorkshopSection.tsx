@@ -129,7 +129,7 @@ export default function WorkshopSection() {
           <div className="flex flex-col items-center justify-center min-h-[250px]">
             <div className="w-10 h-10 rounded-full border-2 border-[#00E5FF] border-t-transparent animate-spin" />
             <p className="mt-4 text-xs font-mono text-[#00E5FF] tracking-wider uppercase animate-pulse">
-              Syncing with Cyfo Network...
+              Syncing with ST7 Network...
             </p>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function WorkshopSection() {
             ⚡ Specialized Training
           </span>
           <h2 className="mt-4 text-3xl md:text-5xl font-sans font-bold tracking-tight text-white">
-            Upskill at <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#2563EB]">Cyfo Workshops</span>
+            Upskill at <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#2563EB]">ST7 Workshops</span>
           </h2>
           <p className="mt-4 text-base text-[#94A3B8]">
             Accelerate your career with industry-proven, high-impact technology bootcamps designed by domain experts.
