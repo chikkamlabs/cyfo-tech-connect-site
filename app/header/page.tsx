@@ -24,7 +24,7 @@ export default function HeaderPage() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-9 h-9 flex items-center justify-center rounded-lg bg-[#00E5FF]/10 border border-[#00E5FF]/30 overflow-hidden transition-all duration-300 group-hover:border-[#00E5FF]/60 group-hover:bg-[#00E5FF]/20">
               <img
-                src="/cyfo-tech-connect-logo.PNG"
+                src="/st7techconnect.PNG"
                 alt="Logo"
                 className="w-full h-full object-contain absolute inset-0 z-10 transition-opacity duration-300"
                 onLoad={(e) => {

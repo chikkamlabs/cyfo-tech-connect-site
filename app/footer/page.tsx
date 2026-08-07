@@ -24,7 +24,7 @@ export default function FooterPage() {
             <div className="flex items-center gap-3">
               <div className="relative w-9 h-9 flex items-center justify-center rounded-lg bg-[#00E5FF]/10 border border-[#00E5FF]/30 overflow-hidden">
                 <img
-                  src="/cyfo-tech-connect-logo.PNG"
+                  src="/st7techconnect.PNG"
                   alt="Logo"
                   className="w-full h-full object-contain absolute inset-0 opacity-0 transition-opacity duration-300"
                   onLoad={(e) => {
