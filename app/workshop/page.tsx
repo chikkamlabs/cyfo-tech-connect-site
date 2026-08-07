@@ -532,19 +532,19 @@ export default function WorkshopDetailPage() {
   );
 }
 
-  const isActive = workshop?.status ?? false;
+const isActive = workshop?.status ?? false;
 
-  const title = isActive ? workshop?.title : "-";
-const description = isActive ? workshop?.description : "-";
-const topics = isActive ? workshop?.topics : ["-"];
-const venue = isActive ? workshop?.venue : "-";
-const dateTime = isActive ? workshop?.dateTime : "-";
-const slots = isActive ? workshop?.slots : "-";
-const speakers = isActive ? workshop?.speakers : ["-"];
-const poster = isActive ? workshop?.poster : "/workshopmock1.png";
-const duration = isActive ? workshop?.duration : "-";
-const actualPrice = isActive ? workshop?.actualPrice : "-";
-const offerPrice = isActive ? workshop?.offerPrice : "-";
+const title = isActive ? workshop?.title ?? "-" : "-";
+const description = isActive ? workshop?.description ?? "-" : "-";
+const topics = isActive ? workshop?.topics ?? ["-"] : ["-"];
+const venue = isActive ? workshop?.venue ?? "-" : "-";
+const dateTime = isActive ? workshop?.dateTime ?? "-" : "-";
+const slots = isActive ? workshop?.slots ?? "-" : "-";
+const speakers = isActive ? workshop?.speakers ?? ["-"] : ["-"];
+const poster = isActive ? workshop?.poster ?? "/workshopmock1.png" : "/workshopmock1.png";
+const duration = isActive ? workshop?.duration ?? "-" : "-";
+const actualPrice = isActive ? workshop?.actualPrice ?? "-" : "-";
+const offerPrice = isActive ? workshop?.offerPrice ?? "-" : "-";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050816] text-white">
