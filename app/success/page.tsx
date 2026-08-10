@@ -205,7 +205,7 @@ function SuccessContent() {
           <CheckCircle className="w-8 h-8" />
         </div>
         <h1 className="text-3xl font-sans font-bold text-white tracking-tight">
-          Payment Successful!
+          Registration Successful!
         </h1>
         <p className="mt-2 text-sm text-[#94A3B8] max-w-md mx-auto">
           Your enrollment has been successfully logged. Present this ticket at the venue/stream entrance for check-in.
