@@ -16,7 +16,8 @@ import {
   Mail, 
   Phone, 
   ShieldCheck, 
-  Ticket 
+  Ticket,
+  MessageCircle 
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import HeaderPage from "../header/page";
@@ -31,6 +32,7 @@ function SuccessContent() {
   const [registration, setRegistration] = useState<any>(null);
   const [payment, setPayment] = useState<any>(null);
   const [workshopTitle, setWorkshopTitle] = useState("Next.js 15 & Supabase Full-Stack Masterclass");
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Generate QR Code containing the ticket registration ID
@@ -58,6 +60,16 @@ function SuccessContent() {
           amount: 999,
           payment_status: "SUCCESS"
         });
+
+        if (supabase) {
+          const { data: ws } = await supabase
+            .from("workshops")
+            .select("title, whatsapp_url")
+            .limit(1)
+            .maybeSingle();
+          if (ws?.whatsapp_url) setWhatsappUrl(ws.whatsapp_url);
+        }
+
         setLoading(false);
         return;
       }
@@ -87,15 +99,31 @@ function SuccessContent() {
         if (reg) {
           setRegistration(reg);
 
-          // Get workshop details
-          const { data: ws } = await supabase
-            .from("workshops")
-            .select("title")
-            .eq("workshop_id", reg.workshop_id)
-            .maybeSingle();
+          // Get workshop details including whatsapp_url
+          let wsData: any = null;
+          if (reg.workshop_id) {
+            const { data: ws } = await supabase
+              .from("workshops")
+              .select("title, whatsapp_url")
+              .or(`id.eq.${reg.workshop_id},workshop_id.eq.${reg.workshop_id}`)
+              .maybeSingle();
+            wsData = ws;
+          }
 
-          if (ws?.title) {
-            setWorkshopTitle(ws.title);
+          if (!wsData) {
+            const { data: ws } = await supabase
+              .from("workshops")
+              .select("title, whatsapp_url")
+              .limit(1)
+              .maybeSingle();
+            wsData = ws;
+          }
+
+          if (wsData?.title) {
+            setWorkshopTitle(wsData.title);
+          }
+          if (wsData?.whatsapp_url) {
+            setWhatsappUrl(wsData.whatsapp_url);
           }
 
           // Fetch payment status
@@ -120,6 +148,15 @@ function SuccessContent() {
             attendance: false,
             created_at: new Date().toISOString()
           });
+
+          const { data: ws } = await supabase
+            .from("workshops")
+            .select("title, whatsapp_url")
+            .limit(1)
+            .maybeSingle();
+          if (ws?.whatsapp_url) {
+            setWhatsappUrl(ws.whatsapp_url);
+          }
         }
       } catch (err) {
         console.error("Error loading registration details on Success Page:", err);
@@ -168,7 +205,7 @@ function SuccessContent() {
           <CheckCircle className="w-8 h-8" />
         </div>
         <h1 className="text-3xl font-sans font-bold text-white tracking-tight">
-          Registration Successful!
+          Payment Successful!
         </h1>
         <p className="mt-2 text-sm text-[#94A3B8] max-w-md mx-auto">
           Your enrollment has been successfully logged. Present this ticket at the venue/stream entrance for check-in.
@@ -259,7 +296,7 @@ function SuccessContent() {
                 className="w-40 h-40 object-contain"
               />
               <div className="text-center mt-3 text-[10px] font-mono text-[#050816] font-semibold tracking-wider select-none uppercase">
-                ST7 Tech Connect ENTRY PASS
+                CYFO ENTRY PASS
               </div>
             </div>
           ) : (
@@ -274,6 +311,30 @@ function SuccessContent() {
         </div>
 
       </div>
+
+      {/* WhatsApp Group Link */}
+      {whatsappUrl && (
+        <div className="mt-6 p-4 md:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-green-500/10 to-emerald-600/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden shadow-lg shadow-emerald-500/5">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+              <MessageCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white">Join Workshop WhatsApp Group</h3>
+              <p className="text-xs text-[#94A3B8] mt-0.5">Click to join the official WhatsApp group for updates and discussion.</p>
+            </div>
+          </div>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#22c55e] hover:bg-[#16a34a] text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/20 shrink-0 hover:scale-[1.02]"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Join WhatsApp</span>
+          </a>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="mt-8 flex flex-wrap justify-center gap-4 print:hidden">
