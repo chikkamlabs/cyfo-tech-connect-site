@@ -32,6 +32,8 @@ function SuccessContent() {
   const [registration, setRegistration] = useState<any>(null);
   const [payment, setPayment] = useState<any>(null);
   const [workshopTitle, setWorkshopTitle] = useState("Next.js 15 & Supabase Full-Stack Masterclass");
+  const [workshopDateTime, setWorkshopDateTime] = useState<string | null>(null);
+  const [workshopVenue, setWorkshopVenue] = useState<string | null>(null);
   const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,10 +66,12 @@ function SuccessContent() {
         if (supabase) {
           const { data: ws } = await supabase
             .from("workshops")
-            .select("title, whatsapp_url")
+            .select("title, whatsapp_url, date_time, venue")
             .limit(1)
             .maybeSingle();
           if (ws?.whatsapp_url) setWhatsappUrl(ws.whatsapp_url);
+          if (ws?.date_time) setWorkshopDateTime(ws.date_time);
+          if (ws?.venue) setWorkshopVenue(ws.venue);
         }
 
         setLoading(false);
@@ -99,12 +103,12 @@ function SuccessContent() {
         if (reg) {
           setRegistration(reg);
 
-          // Get workshop details including whatsapp_url
+          // Get workshop details including whatsapp_url, date_time, venue
           let wsData: any = null;
           if (reg.workshop_id) {
             const { data: ws } = await supabase
               .from("workshops")
-              .select("title, whatsapp_url")
+              .select("title, whatsapp_url, date_time, venue")
               .or(`id.eq.${reg.workshop_id},workshop_id.eq.${reg.workshop_id}`)
               .maybeSingle();
             wsData = ws;
@@ -113,7 +117,7 @@ function SuccessContent() {
           if (!wsData) {
             const { data: ws } = await supabase
               .from("workshops")
-              .select("title, whatsapp_url")
+              .select("title, whatsapp_url, date_time, venue")
               .limit(1)
               .maybeSingle();
             wsData = ws;
@@ -124,6 +128,12 @@ function SuccessContent() {
           }
           if (wsData?.whatsapp_url) {
             setWhatsappUrl(wsData.whatsapp_url);
+          }
+          if (wsData?.date_time) {
+            setWorkshopDateTime(wsData.date_time);
+          }
+          if (wsData?.venue) {
+            setWorkshopVenue(wsData.venue);
           }
 
           // Fetch payment status
@@ -151,11 +161,17 @@ function SuccessContent() {
 
           const { data: ws } = await supabase
             .from("workshops")
-            .select("title, whatsapp_url")
+            .select("title, whatsapp_url, date_time, venue")
             .limit(1)
             .maybeSingle();
           if (ws?.whatsapp_url) {
             setWhatsappUrl(ws.whatsapp_url);
+          }
+          if (ws?.date_time) {
+            setWorkshopDateTime(ws.date_time);
+          }
+          if (ws?.venue) {
+            setWorkshopVenue(ws.venue);
           }
         }
       } catch (err) {
@@ -260,14 +276,18 @@ function SuccessContent() {
                 <Calendar className="w-4 h-4 text-[#00E5FF] shrink-0 print:text-black" />
                 <div>
                   <p className="font-semibold text-white print:text-black">Scheduled Date</p>
-                  <p className="text-[10px] text-white/60 mt-0.5 print:text-black">Check schedules in email</p>
+                  <p className="text-[10px] text-white/60 mt-0.5 print:text-black">
+                    {workshopDateTime || "Check schedules in email"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-xs text-[#94A3B8] print:text-black">
                 <MapPin className="w-4 h-4 text-[#00E5FF] shrink-0 print:text-black" />
                 <div>
                   <p className="font-semibold text-white print:text-black">Venue Location</p>
-                  <p className="text-[10px] text-white/60 mt-0.5 print:text-black">Virtual Stream</p>
+                  <p className="text-[10px] text-white/60 mt-0.5 print:text-black">
+                    {workshopVenue || "Virtual Stream"}
+                  </p>
                 </div>
               </div>
             </div>
